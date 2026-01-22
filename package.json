@@ -1,0 +1,51 @@
+{
+  "name": "agent-exec",
+  "version": "0.1.0",
+  "description": "CLI wrapper for codex, claude, and cursor agent CLIs.",
+  "keywords": [
+    "cli",
+    "agent",
+    "codex",
+    "claude",
+    "cursor",
+    "skills"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeLi2001/v0-run.git"
+  },
+  "homepage": "https://github.com/GeLi2001/v0-run#readme",
+  "bugs": {
+    "url": "https://github.com/GeLi2001/v0-run/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "agent-exec": "dist/agent-exec.js"
+  },
+  "files": [
+    "dist/agent-exec.js",
+    "README.md",
+    "LICENSE",
+    "skills/"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "eslint . --ext .ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
+    "eslint": "^8.57.0",
+    "typescript": "^5.7.3"
+  },
+  "dependencies": {
+    "user": "^0.0.0"
+  }
+}
