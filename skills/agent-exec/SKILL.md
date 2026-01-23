@@ -26,3 +26,5 @@ Use this skill when you need to run the local agent-exec CLI, select an agent, o
 4. JSON output uses headless defaults (codex `exec`, claude `-p`, cursor `--print`).
    Override with `AGENT_EXEC_*_ARGS` (set to empty to disable defaults).
 5. Default output is JSON. Use `--format text` only if human-readable logs are explicitly needed.
+6. Codex has an experimental "run terminal in background" capability. If it is enabled,
+   prefer that for long-running commands so the agent can continue while the job runs.
