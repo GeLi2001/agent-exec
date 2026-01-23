@@ -40,6 +40,10 @@ npx agent-exec skills add vercel-labs/agent-skills
 - Requires an explicit agent selection (`--agent` or `AGENT_EXEC_AGENT`).
 - Runs it in the chosen working directory.
 - Emits a JSON summary of `git status` changes, including file contents.
+- When output is JSON (or stdin is used), it defaults to headless agent flags:
+  - Codex: `exec`
+  - Claude: `-p`
+  - Cursor: `--print`
 
 ## Options
 
@@ -115,12 +119,15 @@ Legacy `AGENT_RUN_*` variables are also supported.
 Cursor's CLI installs an `agent` binary by default. Set `AGENT_EXEC_CURSOR_CMD=cursor`
 if your install uses a different command name.
 
-For non-interactive runs (recommended for automation), configure print mode:
+Headless defaults apply for JSON/stdin output. Override per-agent defaults:
 
 ```bash
+AGENT_EXEC_CODEX_ARGS="exec"
 AGENT_EXEC_CLAUDE_ARGS="-p {prompt}"
-AGENT_EXEC_CURSOR_ARGS="-p {prompt}"
+AGENT_EXEC_CURSOR_ARGS="--print"
 ```
+
+Set any `AGENT_EXEC_*_ARGS` to an empty string to disable the defaults.
 
 ## Contributing
 

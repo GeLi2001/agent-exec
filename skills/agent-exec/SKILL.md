@@ -23,4 +23,6 @@ Use this skill when you need to run the local agent-exec CLI, select an agent, o
 3. For skills installation, run:
    - `npx agent-exec skills add <owner>/<repo>`
    - Add `-g` for global installs and `-y` to skip prompts.
-4. Default output is JSON. Use `--format text` only if human-readable logs are explicitly needed.
+4. JSON output uses headless defaults (codex `exec`, claude `-p`, cursor `--print`).
+   Override with `AGENT_EXEC_*_ARGS` (set to empty to disable defaults).
+5. Default output is JSON. Use `--format text` only if human-readable logs are explicitly needed.

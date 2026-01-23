@@ -226,33 +226,52 @@ Environment:
   AGENT_EXEC_CURSOR_ARGS    default args (supports {prompt})
 
 Legacy AGENT_RUN_* variables are also supported.
+Default headless args (JSON/stdin): codex=exec, claude=-p, cursor=--print.
+Set AGENT_EXEC_*_ARGS to override; set to empty to disable defaults.
 `
 }
 
-function splitArgs(value: string | undefined): string[] {
-  if (!value) return []
+function splitArgs(value: string): string[] {
   return value
     .split(" ")
     .map((part) => part.trim())
     .filter(Boolean)
 }
 
-function buildAgentConfigs(): AgentConfig[] {
+function getEnvArgs(name: string): { args: string[]; explicit: boolean } {
+  const value = getEnvValue(name)
+  if (value === undefined) return { args: [], explicit: false }
+  const trimmed = value.trim()
+  if (!trimmed) return { args: [], explicit: true }
+  return { args: splitArgs(trimmed), explicit: true }
+}
+
+function getDefaultArgs(agent: AgentName, headless: boolean): string[] {
+  if (!headless) return []
+  if (agent === "codex") return ["exec"]
+  if (agent === "claude") return ["-p"]
+  return ["--print"]
+}
+
+function buildAgentConfigs(headlessDefaults: boolean): AgentConfig[] {
+  const codexArgs = getEnvArgs("CODEX_ARGS")
+  const claudeArgs = getEnvArgs("CLAUDE_ARGS")
+  const cursorArgs = getEnvArgs("CURSOR_ARGS")
   return [
     {
       name: "codex",
       cmd: getEnvValue("CODEX_CMD") || "codex",
-      args: splitArgs(getEnvValue("CODEX_ARGS")),
+      args: codexArgs.explicit ? codexArgs.args : getDefaultArgs("codex", headlessDefaults),
     },
     {
       name: "claude",
       cmd: getEnvValue("CLAUDE_CMD") || "claude",
-      args: splitArgs(getEnvValue("CLAUDE_ARGS")),
+      args: claudeArgs.explicit ? claudeArgs.args : getDefaultArgs("claude", headlessDefaults),
     },
     {
       name: "cursor",
       cmd: getEnvValue("CURSOR_CMD") || "agent",
-      args: splitArgs(getEnvValue("CURSOR_ARGS")),
+      args: cursorArgs.explicit ? cursorArgs.args : getDefaultArgs("cursor", headlessDefaults),
     },
   ]
 }
@@ -418,6 +437,10 @@ async function listAgents(configs: AgentConfig[]): Promise<void> {
   }
 }
 
+function shouldUseHeadlessDefaults(format: OutputFormat, inputMode: InputMode): boolean {
+  return format === "json" || inputMode === "stdin"
+}
+
 async function main(): Promise<void> {
   const rawArgs = process.argv.slice(2)
   if (rawArgs[0] === "skills") {
@@ -433,7 +456,7 @@ async function main(): Promise<void> {
     return
   }
 
-  const configs = buildAgentConfigs()
+  const configs = buildAgentConfigs(shouldUseHeadlessDefaults(options.format, options.input))
   if (options.list) {
     await listAgents(configs)
     return
